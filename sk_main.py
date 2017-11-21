@@ -1,3 +1,4 @@
+from multiprocessing import cpu_count
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
@@ -8,7 +9,6 @@ from sklearn.metrics.classification import log_loss
 from sklearn.svm import SVC
 from sklearn.naive_bayes import BernoulliNB
 from transformers.length_transformer import LengthTransformer
-from multiprocessing import cpu_count
 from transformers.marks_count_transformer import MarksCountTransformer
 from transformers.sentences_count_transformer import SentencesCountTransformer
 from transformers.words_count_transformer import WordsCountTransformer
@@ -23,7 +23,7 @@ def pre_process(data):
 
 if __name__ == '__main__':
     with open("Data/arabic_stop_words.txt", "r", encoding="utf-8") as file:
-        arabic_stop_words = file.readline()
+        arabic_stop_words = file.readlines()
     file_path = "Data/tweet_data_v2.txt"
     tweets = pd.read_csv(file_path, sep=r"\s?\|\|\s?", skip_blank_lines=True, engine='python', encoding="utf-8")
     tweets = pre_process(tweets)

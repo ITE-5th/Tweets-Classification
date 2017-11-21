@@ -22,9 +22,9 @@ def pre_process(data):
 
 
 if __name__ == '__main__':
-    with open("arabic_stop_words.txt", "r", encoding="utf-8") as file:
+    with open("Data/arabic_stop_words.txt", "r", encoding="utf-8") as file:
         arabic_stop_words = file.readline()
-    file_path = "Driving_Data_Cleaned_with_hashtag.txt"
+    file_path = "Data/tweet_data_v2.txt"
     tweets = pd.read_csv(file_path, sep=r"\s?\|\|\s?", skip_blank_lines=True, engine='python', encoding="utf-8")
     tweets = pre_process(tweets)
     X, y = tweets["tweet"].astype(np.str), tweets["sentiment"].astype(np.str)

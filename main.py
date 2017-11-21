@@ -16,7 +16,7 @@ def tweet_features(x):
 labeled_tweets = []
 # f = open("Driving_Data_Cleaned_with_hashtag.txt", "r", encoding="utf8")
 # f = open("Driving_Data_Cleaned_without_hash.txt", "r", encoding="utf8")
-f = open("Data/tweetsData.txt", "r", encoding="utf8")
+f = open("Data/tweet_data_v2.txt", "r", encoding="utf8")
 
 line_no = 0
 first = True

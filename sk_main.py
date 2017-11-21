@@ -1,3 +1,4 @@
+import re
 from multiprocessing import cpu_count
 
 import nltk
@@ -12,11 +13,11 @@ from sklearn.naive_bayes import BernoulliNB
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.svm import SVC
 
-from transformers.deny_transformer import DenyTransformer
 from transformers.length_transformer import LengthTransformer
 from transformers.marks_count_transformer import MarksCountTransformer
 from transformers.sentences_count_transformer import SentencesCountTransformer
 from transformers.words_count_transformer import WordsCountTransformer
+
 from preprocessing import pre_process
 
 if __name__ == '__main__':
@@ -66,7 +67,7 @@ if __name__ == '__main__':
             ('marks_count', MarksCountTransformer()),
             ('sentences_count', SentencesCountTransformer()),
             ('words_count', WordsCountTransformer()),
-            ('deny_words_count', DenyTransformer()),
+            # ('deny_words_count', DenyTransformer()),
             # ('deny_words', WordsCountTransformer()),
         ])),
         clz

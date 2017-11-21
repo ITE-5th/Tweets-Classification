@@ -18,6 +18,8 @@ from transformers.words_count_transformer import WordsCountTransformer
 
 
 def pre_process(data):
+    data.dropna(how="any", inplace=True)
+    print("rows = {}".format(data.shape[0]))
     data["sentiment"] = data["sentiment"].apply(lambda x: int(x.lower().strip() == "yes"))
     data["tweet"] = data["tweet"].apply(lambda x: x.strip())
     data["tweet"] = data["tweet"].apply(lambda x: strip_tashkeel(x))

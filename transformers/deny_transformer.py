@@ -20,4 +20,4 @@ class DenyTransformer(BaseEstimator, TransformerMixin):
         return self.transform(X)
 
     def extract(self, arr):
-        return np.array([arr[0].count(word) for word in self.words])
+        return np.array([int(arr[0].count(word) > 0) for word in self.words])

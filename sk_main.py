@@ -11,6 +11,7 @@ from sklearn.naive_bayes import BernoulliNB
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.svm import SVC
 
+from transformers.deny_transformer import DenyTransformer
 from transformers.length_transformer import LengthTransformer
 from transformers.marks_count_transformer import MarksCountTransformer
 from transformers.sentences_count_transformer import SentencesCountTransformer
@@ -25,6 +26,7 @@ def pre_process(data):
     # TODO: are we sure that we should delete all the tweets with any english letter?
     data = data.loc[~data.loc[:, "tweet"].str.contains("[a-zA-Z]"), :]
     data = data.drop_duplicates(subset="tweet")
+    print("rows = {}".format(data.shape[0]))
     return data
 
 
@@ -72,7 +74,7 @@ if __name__ == '__main__':
             ('marks_count', MarksCountTransformer()),
             ('sentences_count', SentencesCountTransformer()),
             ('words_count', WordsCountTransformer()),
-            # ('deny_words', WordsCountTransformer()),
+            # ('deny_words_count', DenyTransformer()),
         ])),
         clz
     ])

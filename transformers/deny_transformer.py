@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.base import TransformerMixin, BaseEstimator
 
 
-class LengthTransformer(BaseEstimator, TransformerMixin):
+class DenyTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, words=None):
         if words is None:
             words = ["الغاء", "إلغاء", "ألغاء"]
@@ -20,4 +20,4 @@ class LengthTransformer(BaseEstimator, TransformerMixin):
         return self.transform(X)
 
     def extract(self, arr):
-        return np.array([arr[0].count(mark) for mark in self.words])
+        return np.array([arr[0].count(word) for word in self.words])

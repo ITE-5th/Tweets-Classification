@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.externals import joblib
 import pandas as pd
-from preprocessing import pre_process_tweet
+from preprocessing.preprocessing import pre_process_tweet
 
 
 class Predictor:
@@ -13,7 +13,7 @@ class Predictor:
         tweets = pd.DataFrame({"tweet": tweets})
         tweets = pre_process_tweet(tweets)
         predicted = self.model.predict(tweets)
-        return ["yes" if pred == 1 else "no" for pred in predicted]
+        return ["yes" if pred >= 0.5 else "no" for pred in predicted]
 
 
 if __name__ == '__main__':

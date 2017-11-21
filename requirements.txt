@@ -1,3 +1,5 @@
+PyQt5
+nltk
 pyarabic
 numpy
 scikit-learn

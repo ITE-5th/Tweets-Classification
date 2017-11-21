@@ -5,7 +5,7 @@ from sklearn.base import TransformerMixin, BaseEstimator
 class DenyTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, words=None):
         if words is None:
-            words = ["الغاء", "إلغاء", "ألغاء", "لانريد", "ضد", "يرفض"]
+            words = ["الغاء", "غير", "إلغاء", "ألغاء", "لانريد", "ضد", "يرفض"]
         self.words = words
 
     def transform(self, tweets):
@@ -20,4 +20,4 @@ class DenyTransformer(BaseEstimator, TransformerMixin):
         return self.transform(X)
 
     def extract(self, arr):
-        return np.array([int(arr[0].count(word) > 0) for word in self.words])
+        return np.array([arr[0].count(word) > 0 for word in self.words])

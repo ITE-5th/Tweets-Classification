@@ -16,6 +16,9 @@ def pre_process_tweet(data):
     data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: x.strip())
     data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: strip_tashkeel(x))
     data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: re.sub("[أإآ]", "ا", x))
+    data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: re.sub("#", "", x))
+    data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: re.sub("_", " ", x))
     # TODO: are we sure that we should delete all the tweets with any english letter?
-    data = data.loc[~data.loc[:, "tweet"].str.contains("[a-zA-Z]"), :]
+    # data = data.loc[~data.loc[:, "tweet"].str.contains("[a-zA-Z]"), :]
+    data = data.loc[~data.loc[:, "tweet"].str.contains("http"), :]
     return data

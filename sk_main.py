@@ -1,3 +1,4 @@
+import re
 from multiprocessing import cpu_count
 
 import numpy as np
@@ -11,7 +12,6 @@ from sklearn.naive_bayes import BernoulliNB
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.svm import SVC
 
-from transformers.deny_transformer import DenyTransformer
 from transformers.length_transformer import LengthTransformer
 from transformers.marks_count_transformer import MarksCountTransformer
 from transformers.sentences_count_transformer import SentencesCountTransformer
@@ -23,6 +23,7 @@ def pre_process(data):
     data.loc[:, "sentiment"] = data.loc[:, "sentiment"].apply(lambda x: int(x.lower().strip() == "yes"))
     data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: x.strip())
     data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: strip_tashkeel(x))
+    data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: re.sub("[أإآ]", "ا", x))
     # TODO: are we sure that we should delete all the tweets with any english letter?
     data = data.loc[~data.loc[:, "tweet"].str.contains("[a-zA-Z]"), :]
     data = data.drop_duplicates(subset="tweet")
@@ -75,7 +76,7 @@ if __name__ == '__main__':
             ('marks_count', MarksCountTransformer()),
             ('sentences_count', SentencesCountTransformer()),
             ('words_count', WordsCountTransformer()),
-            ('deny_words_count', DenyTransformer()),
+            # ('deny_words_count', DenyTransformer()),
             # ('deny_words', WordsCountTransformer()),
         ])),
         clz

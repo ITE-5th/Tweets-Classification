@@ -62,7 +62,7 @@ if __name__ == '__main__':
         ('features_extraction', FeatureUnion([
             ('tfidf',
              TfidfVectorizer(stop_words=set(arabic_stop_words), norm="l2", tokenizer=nltk.tokenize.wordpunct_tokenize,
-                             analyzer="word")),
+                             analyzer="word", ngram_range=(1, 3))),
             ('tweet_length', LengthTransformer()),
             ('marks_count', MarksCountTransformer()),
             ('sentences_count', SentencesCountTransformer()),

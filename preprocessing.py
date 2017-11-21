@@ -1,3 +1,5 @@
+import re
+
 import numpy as np
 from pyarabic.araby import strip_tashkeel
 

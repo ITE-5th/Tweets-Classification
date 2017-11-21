@@ -1,8 +1,9 @@
 from multiprocessing import cpu_count
 
+import nltk
+from sklearn.externals import joblib
 import numpy as np
 import pandas as pd
-from pyarabic.araby import strip_tashkeel
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.classification import log_loss
@@ -16,19 +17,7 @@ from transformers.length_transformer import LengthTransformer
 from transformers.marks_count_transformer import MarksCountTransformer
 from transformers.sentences_count_transformer import SentencesCountTransformer
 from transformers.words_count_transformer import WordsCountTransformer
-
-
-def pre_process(data):
-    data = data.dropna(how="any")
-    data.loc[:, "sentiment"] = data.loc[:, "sentiment"].apply(lambda x: int(x.lower().strip() == "yes"))
-    data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: x.strip())
-    data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: strip_tashkeel(x))
-    # TODO: are we sure that we should delete all the tweets with any english letter?
-    data = data.loc[~data.loc[:, "tweet"].str.contains("[a-zA-Z]"), :]
-    data = data.drop_duplicates(subset="tweet")
-    print("rows = {}".format(data.shape[0]))
-    return data
-
+from preprocessing import pre_process
 
 if __name__ == '__main__':
     with open("Data/arabic_stop_words.txt", "r", encoding="utf-8") as file:
@@ -37,7 +26,7 @@ if __name__ == '__main__':
     # file_path = "./Data/Driving_Data_Cleaned_with_hashtag.txt"
     tweets = pd.read_csv(file_path, sep=r"\s?\|\|\s?", skip_blank_lines=True, engine='python', encoding="utf-8")
     tweets = pre_process(tweets)
-    X, y = tweets["tweet"].astype(np.str), tweets["sentiment"].astype(np.str)
+    X, y = tweets["tweet"].astype(np.str), tweets["sentiment"].astype(np.int)
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
 
     rf_parameters = {
@@ -70,7 +59,9 @@ if __name__ == '__main__':
 
     pipeline = Pipeline([
         ('features_extraction', FeatureUnion([
-            ('tfidf', TfidfVectorizer(stop_words=set(arabic_stop_words), norm="l2")),
+            ('tfidf',
+             TfidfVectorizer(stop_words=set(arabic_stop_words), norm="l2", tokenizer=nltk.tokenize.wordpunct_tokenize,
+                             analyzer="word")),
             ('tweet_length', LengthTransformer()),
             ('marks_count', MarksCountTransformer()),
             ('sentences_count', SentencesCountTransformer()),
@@ -89,3 +80,4 @@ if __name__ == '__main__':
     print("cross entropy error = {}".format(error))
     acc = np.sum(predicted == y_test) / y_test.shape[0] * 100
     print("accuracy = {}".format(acc))
+    joblib.dump(estimator, "models/predictor.pkl")

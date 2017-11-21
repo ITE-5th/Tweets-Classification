@@ -18,12 +18,13 @@ from transformers.words_count_transformer import WordsCountTransformer
 
 
 def pre_process(data):
-    data.drop_duplicates(subset="tweet", inplace=True)
     data["sentiment"] = data["sentiment"].apply(lambda x: int(x.strip() == "yes"))
     data["tweet"] = data["tweet"].apply(lambda x: x.strip())
     data["tweet"] = data["tweet"].apply(lambda x: strip_tashkeel(x))
     # TODO: are we sure that we should delete all the tweets with any english letter?
-    return data[~data["tweet"].str.contains("[a-zA-Z]")]
+    data = data[~data["tweet"].str.contains("[a-zA-Z]")]
+    data.drop_duplicates(subset="tweet", inplace=True)
+    return data
 
 
 if __name__ == '__main__':

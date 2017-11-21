@@ -18,7 +18,7 @@ from transformers.words_count_transformer import WordsCountTransformer
 
 
 def pre_process(data):
-    data["sentiment"] = data["sentiment"].apply(lambda x: int(x.strip() == "yes"))
+    data["sentiment"] = data["sentiment"].apply(lambda x: int(x.lower().strip() == "yes"))
     data["tweet"] = data["tweet"].apply(lambda x: x.strip())
     data["tweet"] = data["tweet"].apply(lambda x: strip_tashkeel(x))
     # TODO: are we sure that we should delete all the tweets with any english letter?

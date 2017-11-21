@@ -14,67 +14,66 @@ from transformers.sentences_count_transformer import SentencesCountTransformer
 from transformers.words_count_transformer import WordsCountTransformer
 
 
-def preprocess(tweets):
-    tweets["sentiment"] = tweets["sentiment"].apply(lambda x: int(x.strip() == "yes"))
-    tweets["tweet"] = tweets["tweet"].apply(lambda x: x.strip())
+def pre_process(data):
+    data["sentiment"] = data["sentiment"].apply(lambda x: int(x.strip() == "yes"))
+    data["tweet"] = data["tweet"].apply(lambda x: x.strip())
     # TODO: are we sure that we should delete all the tweets with any english letter?
-    return tweets[~tweets["tweet"].str.contains("[a-zA-Z]")]
+    return data[~data["tweet"].str.contains("[a-zA-Z]")]
 
 
-with open("arabic_stop_words.txt", "r") as file:
-    arabic_stop_words = file.readline()
-file_path = "Driving_Data_Cleaned_with_hashtag.txt"
-tweets = pd.read_csv(file_path, sep=r"\s?\|\|\s?", skip_blank_lines=True)
-tweets = preprocess(tweets)
-X, y = tweets["tweet"].astype(np.str), tweets["sentiment"].astype(np.str)
-X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+if __name__ == '__main__':
+    with open("arabic_stop_words.txt", "r", encoding="utf-8") as file:
+        arabic_stop_words = file.readline()
+    file_path = "Driving_Data_Cleaned_with_hashtag.txt"
+    tweets = pd.read_csv(file_path, sep=r"\s?\|\|\s?", skip_blank_lines=True, engine='python', encoding="utf-8")
+    tweets = pre_process(tweets)
+    X, y = tweets["tweet"].astype(np.str), tweets["sentiment"].astype(np.str)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
 
+    rf_parameters = {
+        'rf__n_estimators': [50, 100, 200],
+        'rf__max_features': ['log2', 'sqrt', 0.8]
+    }
 
-rf_parameters = {
-    'rf__n_estimators': [50, 100, 200],
-    'rf__max_features': ['log2', 'sqrt', 0.8]
-}
+    svc_parameters = {
+        'svc__C': [10, 100, 1000],
+        'svc__gamma': [0.001, 0.0001],
+        'svc__kernel': ['rbf', "linear"]
+    }
 
-svc_parameters = {
-    'svc__C': [10, 100, 1000],
-    'svc__gamma': [0.001, 0.0001],
-    'svc__kernel': ['rbf', "linear"]
-}
+    nb_parameters = {
+        'nb__alpha': (1, 0.1, 0.01, 0.001, 0.00001)
+    }
 
-nb_parameters = {
-    'nb__alpha': (1, 0.1, 0.01, 0.001, 0.00001)
-}
+    # change to svc or nb if you want, svc will take a long time
+    method = "rf"
 
+    if method == "rf":
+        clz = ("rf", RandomForestClassifier())
+        parameters = rf_parameters
+    elif method == "svc":
+        clz = ("svc", SVC())
+        parameters = svc_parameters
+    else:
+        clz = ("nb", BernoulliNB())
+        parameters = nb_parameters
 
-# change to svc or nb if you want, svc will take a long time
-method = "rf"
+    pipeline = Pipeline([
+        ('features_extraction', FeatureUnion([
+            ('tfidf', TfidfVectorizer(stop_words=set(arabic_stop_words), norm="l2")),
+            ('tweet_length', LengthTransformer()),
+            ('marks_count', MarksCountTransformer()),
+            ('sentences_count', SentencesCountTransformer()),
+            ('words_count', WordsCountTransformer()),
+        ])),
+        clz
+    ])
 
-if method == "rf":
-    clz = ("rf", RandomForestClassifier())
-    parameters = rf_parameters
-elif method == "svc":
-    clz = ("svc", SVC())
-    parameters = svc_parameters
-else:
-    clz = ("nb", BernoulliNB())
-    parameters = nb_parameters
-
-pipeline = Pipeline([
-    ('features_extraction', FeatureUnion([
-        ('tfidf', TfidfVectorizer(stop_words=set(arabic_stop_words), norm="l2")),
-        ('tweet_length', LengthTransformer()),
-        ('marks_count', MarksCountTransformer()),
-        ('sentences_count', SentencesCountTransformer()),
-        ('words_count', WordsCountTransformer()),
-    ])),
-    clz
-])
-
-grid = GridSearchCV(estimator=pipeline, param_grid=parameters, cv=10, n_jobs=cpu_count())
-grid.fit(X_train, y_train)
-estimator = grid.best_estimator_
-predicted = estimator.predict(X_test)
-error = log_loss(y_test, predicted)
-print("cross entropy error = {}".format(error))
-acc = np.sum(predicted == y_test) / y_test.shape[0] * 100
-print("accuracy = {}".format(acc))
+    grid = GridSearchCV(estimator=pipeline, param_grid=parameters, cv=10, n_jobs=cpu_count())
+    grid.fit(X_train, y_train)
+    estimator = grid.best_estimator_
+    predicted = estimator.predict(X_test)
+    error = log_loss(y_test, predicted)
+    print("cross entropy error = {}".format(error))
+    acc = np.sum(predicted == y_test) / y_test.shape[0] * 100
+    print("accuracy = {}".format(acc))

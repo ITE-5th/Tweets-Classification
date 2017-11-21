@@ -19,7 +19,11 @@ labeled_tweets = []
 f = open("tweetsData.txt", "r", encoding="utf8")
 
 line_no = 0
+first = True
 for line in f:
+    if first:
+        first = False
+        continue
     line_no = line_no + 1
     res = line.split('||')
     try:

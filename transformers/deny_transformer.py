@@ -5,7 +5,7 @@ from sklearn.base import TransformerMixin, BaseEstimator
 class DenyTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, words=None):
         if words is None:
-            words = ["الغاء", "إلغاء", "ألغاء"]
+            words = ["الغاء", "إلغاء", "ألغاء", "لانريد", "ضد", "يرفض"]
         self.words = words
 
     def transform(self, tweets):

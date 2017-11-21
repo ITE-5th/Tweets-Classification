@@ -34,6 +34,7 @@ if __name__ == '__main__':
     with open("Data/arabic_stop_words.txt", "r", encoding="utf-8") as file:
         arabic_stop_words = file.readlines()
     file_path = "Data/tweet_data_v2.txt"
+    # file_path = "./Data/Driving_Data_Cleaned_with_hashtag.txt"
     tweets = pd.read_csv(file_path, sep=r"\s?\|\|\s?", skip_blank_lines=True, engine='python', encoding="utf-8")
     tweets = pre_process(tweets)
     X, y = tweets["tweet"].astype(np.str), tweets["sentiment"].astype(np.str)
@@ -74,7 +75,8 @@ if __name__ == '__main__':
             ('marks_count', MarksCountTransformer()),
             ('sentences_count', SentencesCountTransformer()),
             ('words_count', WordsCountTransformer()),
-            # ('deny_words_count', DenyTransformer()),
+            ('deny_words_count', DenyTransformer()),
+            # ('deny_words', WordsCountTransformer()),
         ])),
         clz
     ])

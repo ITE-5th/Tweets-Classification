@@ -17,6 +17,7 @@ from transformers.words_count_transformer import WordsCountTransformer
 def preprocess(tweets):
     tweets["sentiment"] = tweets["sentiment"].apply(lambda x: int(x.strip() == "yes"))
     tweets["tweet"] = tweets["tweet"].apply(lambda x: x.strip())
+    # TODO: are we sure that we should delete all the tweets with any english letter?
     return tweets[~tweets["tweet"].str.contains("[a-zA-Z]")]
 
 

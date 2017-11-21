@@ -1,14 +1,17 @@
+from multiprocessing import cpu_count
+
 import numpy as np
 import pandas as pd
+from pyarabic.araby import strip_tashkeel
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.metrics.classification import log_loss
-from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.naive_bayes import BernoulliNB
+from sklearn.pipeline import Pipeline, FeatureUnion
+from sklearn.svm import SVC
+
 from transformers.length_transformer import LengthTransformer
-from multiprocessing import cpu_count
 from transformers.marks_count_transformer import MarksCountTransformer
 from transformers.sentences_count_transformer import SentencesCountTransformer
 from transformers.words_count_transformer import WordsCountTransformer
@@ -17,6 +20,7 @@ from transformers.words_count_transformer import WordsCountTransformer
 def pre_process(data):
     data["sentiment"] = data["sentiment"].apply(lambda x: int(x.strip() == "yes"))
     data["tweet"] = data["tweet"].apply(lambda x: x.strip())
+    data["tweet"] = data["tweet"].apply(lambda x: strip_tashkeel(x))
     # TODO: are we sure that we should delete all the tweets with any english letter?
     return data[~data["tweet"].str.contains("[a-zA-Z]")]
 
@@ -65,6 +69,7 @@ if __name__ == '__main__':
             ('marks_count', MarksCountTransformer()),
             ('sentences_count', SentencesCountTransformer()),
             ('words_count', WordsCountTransformer()),
+            # ('deny_words', WordsCountTransformer()),
         ])),
         clz
     ])

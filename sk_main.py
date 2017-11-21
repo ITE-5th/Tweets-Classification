@@ -18,14 +18,13 @@ from transformers.words_count_transformer import WordsCountTransformer
 
 
 def pre_process(data):
-    data.dropna(how="any", inplace=True)
-    print("rows = {}".format(data.shape[0]))
-    data["sentiment"] = data["sentiment"].apply(lambda x: int(x.lower().strip() == "yes"))
-    data["tweet"] = data["tweet"].apply(lambda x: x.strip())
-    data["tweet"] = data["tweet"].apply(lambda x: strip_tashkeel(x))
+    data = data.dropna(how="any")
+    data.loc[:, "sentiment"] = data.loc[:, "sentiment"].apply(lambda x: int(x.lower().strip() == "yes"))
+    data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: x.strip())
+    data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: strip_tashkeel(x))
     # TODO: are we sure that we should delete all the tweets with any english letter?
-    data = data[~data["tweet"].str.contains("[a-zA-Z]")]
-    data.drop_duplicates(subset="tweet", inplace=True)
+    data = data.loc[~data.loc[:, "tweet"].str.contains("[a-zA-Z]"), :]
+    data = data.drop_duplicates(subset="tweet")
     return data
 
 

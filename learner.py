@@ -108,7 +108,7 @@ class Learner:
 
 
 if __name__ == '__main__':
-    # file_name = "tweet_data_v2.txt"
-    file_name = "Driving_Data_Cleaned_with_hashtag.txt"
+    file_name = "tweet_data_v2.txt"
+    # file_name = "Driving_Data_Cleaned_with_hashtag.txt"
     learner = Learner("data", file_name)
     learner.learn()

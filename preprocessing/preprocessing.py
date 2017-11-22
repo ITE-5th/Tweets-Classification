@@ -15,7 +15,9 @@ def pre_process(data):
 def pre_process_tweet(data):
     data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: x.strip())
     data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: strip_tashkeel(x))
-    data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: re.sub("[أإآ]", "ا", x))
+    data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: re.sub("[أإآى]", "ا", x))
+    data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: re.sub("[ؤ]", "و", x))
+    data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: re.sub("[ئ]", "ي", x))
     data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: re.sub("#", "", x))
     data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: re.sub("_", " ", x))
     data.loc[:, "tweet"] = data.loc[:, "tweet"].apply(lambda x: re.sub(r'(.)\1+', r'\1', x))

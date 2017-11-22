@@ -13,7 +13,7 @@ class Predictor:
         tweets = pd.DataFrame({"tweet": tweets})
         tweets = pre_process_tweet(tweets)
         predicted = self.model.predict(tweets)
-        return ["yes" if pred >= 0.5 else "no" for pred in predicted]
+        return ["yes" if pred > 0.5 else "no" for pred in predicted]
 
 
 if __name__ == '__main__':

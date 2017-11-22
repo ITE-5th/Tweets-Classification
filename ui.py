@@ -57,6 +57,5 @@ class Ui_MainWindow(QWidget):
 
 if __name__ == '__main__':
     from nltk.corpus import sentiwordnet as swn
-
     happ = swn.senti_synset('سِيءَ.a.03')
     print(happ.pos_score())

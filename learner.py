@@ -96,7 +96,7 @@ class Learner:
             clz
         ])
 
-        grid = GridSearchCV(estimator=pipeline, param_grid=parameters, cv=10)
+        grid = GridSearchCV(estimator=pipeline, param_grid=parameters, cv=10, n_jobs=-1)
         grid.fit(X_train, y_train)
         estimator = grid.best_estimator_
         predicted = estimator.predict(X_test)
